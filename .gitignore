@@ -1,0 +1,67 @@
+# --- Vendored upstream (pulled by scripts/setup.sh, never committed) ---
+/vendor/
+
+# --- Python environment ---
+.venv/
+.venv-logs/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# ══════════════════════════════════════════════════════════════════════
+#  YOUR RESEARCH PROJECTS (studies)
+#  Each study is a self-contained folder under projects/<id>/ holding ALL
+#  of its files: idea, experiment code, logs, results, plots, paper, review.
+#
+#  Ignored by DEFAULT so you can push the integration layer (.claude/, aisci/,
+#  bridge/, scripts/, docs) to a PUBLIC remote WITHOUT shipping your studies.
+#
+#  ▶ Keeping this as a PRIVATE repo and want to version your studies too?
+#    Comment out the `/projects/*` line below (leave the `!` lines) and your
+#    project folders will be tracked. See README.md → "Projects & privacy".
+# ══════════════════════════════════════════════════════════════════════
+/projects/*
+!/projects/README.md
+!/projects/.gitkeep
+
+# Topic drafts (the input/seed of a project) are staged in ideas/ and copied
+# into each project when ideation runs. They reveal your research directions,
+# so they are ignored by default too — only the template and README are tracked.
+# Un-ignore them the same way (comment the next line) if managing privately.
+/ideas/*
+!/ideas/TEMPLATE_topic.md
+!/ideas/README.md
+
+# --- Legacy / other AI-Scientist run artifacts ---
+/runs/
+/experiments/
+/workspaces/
+/logs/
+/aisci_results/
+*.token_tracker.json
+
+# --- Bridge runtime cache / logs ---
+/.aisci_cache/
+/bridge/__pycache__/
+bridge_calls.log
+
+# --- MCP server local data (downloaded papers, never committed) ---
+/.mcp-data/
+
+# --- Secrets & local config ---
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+
+# --- Claude Code local (machine-specific) settings ---
+.claude/settings.local.json
+
+# --- OS / editor ---
+.DS_Store
+*.swp
+.idea/
+.vscode/

@@ -1,0 +1,14 @@
+{
+  "_comment": "Per-model overrides: AI-Scientist model string -> concrete Claude model id. Anything not listed falls back to the substring->tier table in bridge/model_map.py. Tier defaults can also be set via AISCI_CLAUDE_MODEL_{BIG,DEFAULT,SMALL} env vars.",
+  "_tiers": {
+    "big": "claude-opus-4-8",
+    "default": "claude-sonnet-4-6",
+    "small": "claude-haiku-4-5-20251001"
+  },
+  "overrides": {
+    "o1-preview-2024-09-12": "claude-opus-4-8",
+    "o3-mini-2025-01-31": "claude-sonnet-4-6",
+    "gpt-4o-2024-11-20": "claude-sonnet-4-6",
+    "gpt-4o-2024-05-13": "claude-sonnet-4-6"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "arxiv": {
+      "command": "${CLAUDE_PROJECT_DIR:-.}/.venv/bin/uvx",
+      "args": [
+        "arxiv-mcp-server",
+        "--storage-path", "${CLAUDE_PROJECT_DIR:-.}/.mcp-data/arxiv-papers"
+      ]
+    },
+    "semantic-scholar": {
+      "command": "${CLAUDE_PROJECT_DIR:-.}/.venv/bin/uvx",
+      "args": ["semantic-scholar-fastmcp"],
+      "env": {
+        "SEMANTIC_SCHOLAR_API_KEY": "${SEMANTIC_SCHOLAR_API_KEY:-}",
+        "SEMANTIC_SCHOLAR_ENABLE_HTTP_BRIDGE": "0"
+      }
+    }
+  }
+}
