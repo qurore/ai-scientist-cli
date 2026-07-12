@@ -18,15 +18,10 @@ __pycache__/
 #  Ignored by DEFAULT so you can push the integration layer (.claude/, .codex/, aisci/,
 #  bridge/, scripts/, docs) to a PUBLIC remote WITHOUT shipping your studies.
 #
-#  ▶ Keeping this as a PRIVATE repo and want to version your studies too?
-#    Comment out the `/projects/*` line below (leave the `!` lines) and your
-#    project folders will be tracked. See README.md → "Projects & privacy".
+#  Keep research projects local. If you intentionally want to version a study,
+#  use a separate private repository for it.
 # ══════════════════════════════════════════════════════════════════════
-# NOTE: research studies are TRACKED in this repo (un-ignored on purpose).
-#       Re-enable the line below to keep studies local/private again.
-# /projects/*
-!/projects/README.md
-!/projects/.gitkeep
+/projects/
 
 # Topic drafts (the input/seed of a project) are staged in ideas/ and copied
 # into each project when ideation runs. They reveal your research directions,
