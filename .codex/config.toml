@@ -1,0 +1,7 @@
+[features]
+hooks = true
+
+# Project-scoped defaults load only after the repository is trusted.
+[shell_environment_policy]
+inherit = "all"
+set = { PYTHONUNBUFFERED = "1", AISCI_AUTOPILOT = "0" }

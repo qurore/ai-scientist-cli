@@ -1,0 +1,4 @@
+interface:
+  display_name: "AI Scientist"
+  short_description: "Run an end-to-end autonomous research study"
+  default_prompt: "Use $ai-scientist to start a rigorous research study."

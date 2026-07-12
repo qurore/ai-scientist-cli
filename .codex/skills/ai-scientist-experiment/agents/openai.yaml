@@ -1,0 +1,4 @@
+interface:
+  display_name: "AI Scientist experiment"
+  short_description: "Run the experiment stage of AI Scientist"
+  default_prompt: "Use $ai-scientist-experiment for this study."

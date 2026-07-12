@@ -1,0 +1,4 @@
+interface:
+  display_name: "AI Scientist ideate"
+  short_description: "Run the ideate stage of AI Scientist"
+  default_prompt: "Use $ai-scientist-ideate for this study."

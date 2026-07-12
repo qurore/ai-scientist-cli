@@ -1,0 +1,4 @@
+interface:
+  display_name: "AI Scientist review"
+  short_description: "Run the review stage of AI Scientist"
+  default_prompt: "Use $ai-scientist-review for this study."

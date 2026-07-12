@@ -1,0 +1,4 @@
+interface:
+  display_name: "AI Scientist improve"
+  short_description: "Run the improve stage of AI Scientist"
+  default_prompt: "Use $ai-scientist-improve for this study."

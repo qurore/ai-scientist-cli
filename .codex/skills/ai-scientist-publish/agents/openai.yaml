@@ -1,0 +1,4 @@
+interface:
+  display_name: "AI Scientist publish"
+  short_description: "Run the publish stage of AI Scientist"
+  default_prompt: "Use $ai-scientist-publish for this study."

@@ -15,14 +15,16 @@ __pycache__/
 #  Each study is a self-contained folder under projects/<id>/ holding ALL
 #  of its files: idea, experiment code, logs, results, plots, paper, review.
 #
-#  Ignored by DEFAULT so you can push the integration layer (.claude/, aisci/,
+#  Ignored by DEFAULT so you can push the integration layer (.claude/, .codex/, aisci/,
 #  bridge/, scripts/, docs) to a PUBLIC remote WITHOUT shipping your studies.
 #
 #  ▶ Keeping this as a PRIVATE repo and want to version your studies too?
 #    Comment out the `/projects/*` line below (leave the `!` lines) and your
 #    project folders will be tracked. See README.md → "Projects & privacy".
 # ══════════════════════════════════════════════════════════════════════
-/projects/*
+# NOTE: research studies are TRACKED in this repo (un-ignored on purpose).
+#       Re-enable the line below to keep studies local/private again.
+# /projects/*
 !/projects/README.md
 !/projects/.gitkeep
 
@@ -30,7 +32,8 @@ __pycache__/
 # into each project when ideation runs. They reveal your research directions,
 # so they are ignored by default too — only the template and README are tracked.
 # Un-ignore them the same way (comment the next line) if managing privately.
-/ideas/*
+# NOTE: topic drafts are TRACKED too (un-ignored on purpose).
+# /ideas/*
 !/ideas/TEMPLATE_topic.md
 !/ideas/README.md
 

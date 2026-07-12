@@ -1,0 +1,4 @@
+interface:
+  display_name: "AI Scientist writeup"
+  short_description: "Run the writeup stage of AI Scientist"
+  default_prompt: "Use $ai-scientist-writeup for this study."
