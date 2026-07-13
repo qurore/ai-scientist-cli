@@ -46,6 +46,11 @@ integration layer can be pushed to a public remote without shipping your studies
 version them in a private repo, flip the documented toggle in `.gitignore` (see
 `projects/README.md`).
 
+**`projects/example_structure/` is a reference, not a real study.** It mirrors the exact
+file tree above (every path a project can contain), but each file's content documents
+that file's format/schema instead of holding real research. Consult it when unsure what
+to write where, or which files are hand-authored vs. tool-generated.
+
 ## How to operate
 
 - Start / coordinate a study with the **`ai-scientist`** skill. Run stages with
