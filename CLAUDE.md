@@ -84,6 +84,14 @@ block (e.g. `"AAMAS": {...}`). Select per project with `aisci.run new --rubric <
 missing key means `neurips-ml`). Keep one rubric per project across iterations so its
 score history stays comparable.
 
+**Strict review calibration — no target-seeking.** The improvement-loop target of
+Overall `>= 8/10` is a stopping criterion for revision work, not a desired reviewer
+output, prior, quota, or reason to round a score up. Review only the current paper and
+its evidence against the selected rubric; do not soften weaknesses, adjust severity, or
+change the verdict to help the study clear `8/10`. If the evidence earns a score below
+`8/10` or a `Reject` verdict, report it exactly. Further improvement must come from real
+research and writing, never reviewer leniency.
+
 ### Bridge usage (only for upstream parity)
 ```bash
 python -m bridge.run vendor/AI-Scientist-v2/<script>.py [args...]

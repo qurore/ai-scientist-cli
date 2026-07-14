@@ -140,6 +140,17 @@ Common helper commands:
 - Use the project's configured rubric consistently across revisions so review scores
   remain comparable.
 
+## Review calibration and the 8/10 target
+
+- Review strictly and independently of any improvement target. The `8/10` threshold is
+  only a stopping goal for the improvement loop; it is never a desired reviewer output,
+  prior, quota, or reason to round a score up.
+- Apply the configured rubric to the paper and evidence exactly as presented. Record
+  every material weakness and assign the honest score and verdict even when the result
+  remains below `8/10` or is `Reject`.
+- Never soften, inflate, or otherwise manipulate a review to clear the threshold.
+  Improvement must come from stronger research and writing, not reviewer leniency.
+
 ## Decision and progress records
 
 Record consequential decisions when they are made:
