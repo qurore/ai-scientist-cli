@@ -42,9 +42,20 @@ carry venue branding — prefer the neutral setup below.
    \graphicspath{{../figures/}}
    ```
    Put figures in `projects/<id>/writeup/figures/`.
-2. **Gather citations.** Build `references.bib` from real papers via the
+2. **Gather citations — NEVER hand-write a bib entry.** Find candidate papers via the
    `mcp__semantic-scholar__*` / `mcp__arxiv__*` MCP tools (or WebSearch / the Semantic
-   Scholar API via `curl`). Verify each exists — **never invent citations**.
+   Scholar API via `curl`), but the *only* thing you take from the search is the
+   **arXiv id or DOI**. The BibTeX itself is generated from the authoritative registry
+   record (title, authors, year — no hallucinated metadata is possible by construction):
+   ```bash
+   .venv/bin/python -m aisci.citations add projects/<id> --arxiv <id> [--key <bibkey>]
+   .venv/bin/python -m aisci.citations add projects/<id> --doi <doi>   [--key <bibkey>]
+   ```
+   Each `add` also archives the citation's **evidence vault** under
+   `writeup/citations/<bibkey>/`: the paper's PDF, its extracted text, and a snapshot
+   of the source webpage. Typing an author list or title into `references.bib` by hand
+   is a protocol violation — if an entry needs fixing, re-run `add` (same `--key`) or
+   `aisci.citations rebib`.
    **Cite actively, not minimally.** A top-journal paper situates itself in a broad
    literature; err on the side of engaging *more* prior work, never less. Run a
    separate, explicit search pass for each of these categories:
@@ -63,9 +74,9 @@ carry venue branding — prefer the neutral setup below.
    phrase saying *how* it relates. Never add a reference you haven't verified or can't
    say something concrete about; a bare citation dump (`[3,7,12,19]` with no
    discussion) is padding, not coverage.
-   Verifying each citation by hand via the MCP is the primary defense; step 7 adds a
-   **deterministic backstop** (`aisci.bibcheck`) that catches any fabricated entry that
-   slips through, so build the `.bib` with real DOIs / arXiv ids where possible.
+   Every reference must carry a DOI or arXiv id (the vault requires one); step 7's
+   deterministic gates (`aisci.citations verify` + `aisci.bibcheck`) are hook-enforced,
+   so an unevidenced or metadata-drifted entry cannot ship.
 3. **Write the paper** section by section, grounded **only** in `experiment/` results:
    Title, Abstract, Introduction, Related Work, Method, Experimental Setup, Experiments &
    Results (real numbers, mean±std, from `experiment_results/summary.json`; figures from
@@ -84,20 +95,40 @@ carry venue branding — prefer the neutral setup below.
    can see it), check figures render, captions match and are self-contained, every claim is
    supported, the prose is clear and complete, and the argument is tight. Revise and
    recompile. Improve quality; do **not** cut substance to hit a length.
-7. **Verify citations deterministically (enforced).** Before finalizing, run the
-   citation checker — it parses `references.bib` and confirms every entry is a real,
-   findable paper against the Crossref + arXiv APIs (no LLM/MCP), writing
-   `writeup/bibcheck.json`:
-   ```bash
-   .venv/bin/python -m aisci.bibcheck projects/<id>
-   ```
-   Fix every **blocking** entry (`not_found` = a DOI/arXiv id that doesn't resolve;
-   `unresolved` = a title no real paper matches — both are hallucination signals):
-   correct the identifier/title against the real paper (re-verify via the arxiv /
-   semantic-scholar MCP) or remove the reference, then re-run until it reports CLEAN.
-   `title_mismatch` / `no_query` are warnings — check them but they don't block.
-   The `enforce_bibcheck` hook **blocks** marking this stage done until a fresh, clean
-   report exists, so there is no way to ship a paper with an unverified citation.
+7. **Verify citations deterministically (enforced, two layers).** After the paper text
+   is stable, complete the per-citation evidence and run both gates:
+   1. **Usage evidence** — for *every* reference, record how the paper uses it, with a
+      **verbatim quote from the archived paper text** (open
+      `writeup/citations/<key>/paper.txt`, copy the passage exactly — never paraphrase,
+      never quote from memory; the command refuses a quote that isn't really there):
+      ```bash
+      .venv/bin/python -m aisci.citations usage projects/<id> --key <bibkey> \
+        --where "Sec. 2 Related Work" --claim "<the sentence in paper.tex citing it>" \
+        --quote "<verbatim passage from the cited paper>" --note "<how it supports the claim>"
+      ```
+      If, while doing this, you find the citation does NOT support the claim, fix the
+      paper text (or drop the citation) — or record `--context-flag` so the gate blocks
+      until it is fixed. Never write a quote that stretches the source.
+   2. **Vault verification** — checks every entry field-by-field against the registry
+      (strict title, full author list, year), that the PDF/snapshot/text artifacts
+      exist and match their recorded hashes, that every entry is actually `\cite`'d,
+      and that every usage quote appears verbatim in the archived text. Writes
+      `writeup/citations/index.json`:
+      ```bash
+      .venv/bin/python -m aisci.citations verify projects/<id>
+      ```
+   3. **Existence backstop** — the original checker still runs (it also covers strict
+      title/author/year now), writing `writeup/bibcheck.json`:
+      ```bash
+      .venv/bin/python -m aisci.bibcheck projects/<id>
+      ```
+   Fix every blocking issue *at the source* (regenerate the entry with
+   `aisci.citations add`/`rebib`, complete the vault, correct the paper text) and
+   re-run until **both** report CLEAN. The `enforce_bibcheck` and `enforce_citations`
+   hooks block marking this stage done until fresh, clean reports exist — and the
+   citations hook re-runs the offline checks itself, so hand-editing a report file
+   achieves nothing. Re-verify after the *final* compile: the index is stale the
+   moment `references.bib` or the main `.tex` changes.
 8. **Finalize:** copy the final PDF to `projects/<id>/writeup/paper.pdf`. Record the key
    writeup decisions (`aisci.run decide …`), then update `state.json`:
    `stage="writeup"`, `status="done"`.
@@ -114,7 +145,8 @@ carry venue branding — prefer the neutral setup below.
   page budget. There is no page budget.
 
 ## Output to the user
-Report: compile status (clean?), figure list, citation count **and bibcheck verdict
-(N verified / 0 blocking)**, page count (as an *observation*, not a target), and the
-path to `paper.pdf`. Offer to proceed to `/ai-scientist-review` (or to the improvement
-loop, `/ai-scientist-improve`).
+Report: compile status (clean?), figure list, citation count **and both citation
+verdicts** (`citations verify`: N fully evidenced / 0 blocking; `bibcheck`: N verified /
+0 blocking), page count (as an *observation*, not a target), and the path to
+`paper.pdf`. Offer to proceed to `/ai-scientist-review` (or to the improvement loop,
+`/ai-scientist-improve`).

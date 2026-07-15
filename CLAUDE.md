@@ -19,7 +19,7 @@ review it, with your own tools. No external LLM API keys are used.
 
 ```
 .claude/skills/        ai-scientist (orchestrator) + ideate/experiment/writeup/review
-.claude/hooks/         session_start, guard_experiment_exec, enforce_decision_log, enforce_bibcheck, log_tool_use, stop_autopilot
+.claude/hooks/         session_start, guard_experiment_exec, enforce_decision_log, enforce_bibcheck, enforce_citations, log_tool_use, stop_autopilot
 .claude/settings.json  wires the hooks; default-off autopilot; minimal permissions
 .mcp.json              project-shared MCP servers: arxiv, semantic-scholar (literature search)
 aisci/                 thin python helpers the skills shell out to (run/exec/latex/state)
@@ -69,6 +69,9 @@ to write where, or which files are hand-authored vs. tool-generated.
 .venv/bin/python -m aisci.exec projects/<id> code/<file>.py --timeout S # run an experiment script
 .venv/bin/python -m aisci.exec projects/<id> code/<file>.py --backend colab # ...on a Colab GPU (compute only; see colab/README.md)
 .venv/bin/python -m aisci.latex projects/<id>/writeup/latex paper.tex   # compile the paper
+.venv/bin/python -m aisci.citations add projects/<id> --arxiv <id>   # generate a citation + archive its evidence
+.venv/bin/python -m aisci.citations verify projects/<id>            # verify the whole citation-evidence vault
+.venv/bin/python -m aisci.bibcheck projects/<id>                    # existence/metadata backstop check
 bash scripts/doctor.sh                                              # diagnose env
 ```
 
@@ -165,25 +168,46 @@ This is **enforced**: the `enforce_decision_log` PreToolUse hook **blocks** mark
 decisions as you make them — idea pivots, experiment redesigns, framing calls, the review
 verdict.
 
-## Citation integrity — no hallucinated references (enforced)
+## Citation integrity — no hallucinated references (enforced, two layers)
 
-"Never fabricate citations" is backed by a **deterministic** check, not just discipline.
-`aisci.bibcheck` parses a project's `references.bib` and confirms each entry is a real,
-findable paper via the **Crossref + arXiv public APIs** (no LLM, no MCP), writing a report
-to `projects/<id>/writeup/bibcheck.json`:
+"Never fabricate citations" is backed by **deterministic** machinery, not just
+discipline. Both layers use only public bibliographic APIs (Crossref, arXiv; no LLM,
+no MCP) and both are hook-enforced.
+
+**Layer 1 — generation + evidence vault (`aisci.citations`).** Bib entries are
+**generated from the registry, never hand-written**: `citations add --arxiv <id>` (or
+`--doi`) fetches the authoritative record and renders the BibTeX itself, so hallucinated
+titles/authors/years are impossible by construction. Each citation also gets an evidence
+folder `projects/<id>/writeup/citations/<bibkey>/` holding the cited paper's **archived
+PDF** (`paper.pdf`), its extracted text (`paper.txt`), a **snapshot of the source
+webpage** (`source.html`, optionally also saved to the Wayback Machine with `--wayback`),
+and `evidence.json` — the registry record, artifact hashes, and **usage records**: where
+the paper cites it, the claim, and a **verbatim quote from the cited paper** that must
+literally appear in the archived text (`citations usage` refuses a quote that isn't
+there). `citations verify` re-checks everything (field-level registry match, artifact
+hashes, every entry actually `\cite`'d, every quote present) and writes
+`writeup/citations/index.json`. Registry-less sources (whitepapers/standards) use
+`citations exempt --url --reason`, which requires archiving the primary source itself.
+The `enforce_citations` hook **blocks** closing the writeup stage (and the study) until
+the index is fresh (bib + tex hashes match) and fully clean — and it re-runs the offline
+checks itself, so hand-editing `index.json` achieves nothing.
+
+**Layer 2 — existence + metadata backstop (`aisci.bibcheck`).** Parses `references.bib`
+and checks every entry against Crossref/arXiv, writing `writeup/bibcheck.json`. Blocking
+signals: an id that doesn't resolve (`not_found`), a title no real paper matches
+(`unresolved`), and — the "real paper, hallucinated metadata" failure — a strict title
+mismatch (`title_mismatch`, no substring leniency: a fabricated subtitle blocks) or an
+author list that differs from the registry (`author_mismatch`). `year_mismatch` /
+`no_query` / `exempt` are non-blocking warnings. The `enforce_bibcheck` hook blocks stage
+completion until the report is fresh and clean, exactly as before.
 ```bash
-.venv/bin/python -m aisci.bibcheck projects/<id>
+.venv/bin/python -m aisci.citations add projects/<id> --arxiv <id> [--key k]  # generate entry + archive evidence
+.venv/bin/python -m aisci.citations usage projects/<id> --key k --where ... --claim ... --quote ... --note ...
+.venv/bin/python -m aisci.citations verify projects/<id>                      # writes citations/index.json
+.venv/bin/python -m aisci.bibcheck projects/<id>                              # writes bibcheck.json
 ```
-It flags the concrete hallucination signals — a DOI/arXiv id that doesn't resolve
-(`not_found`) or a title no real paper matches (`unresolved`) — as **blocking**; messy
-metadata (`title_mismatch`) and id-less entries (`no_query`) are non-blocking warnings.
-This is **enforced**: the `enforce_bibcheck` PreToolUse hook **blocks** marking the
-writeup stage `--status done` (and the study `--complete`) until a report exists that is
-**fresh** (its `bib_sha256` matches the current `references.bib`, so you can't pass an old
-report then edit the bib) and **clean** (zero blocking, and at least one citation actually
-verified — an all-offline report doesn't count). The hook only reads the JSON, never the
-network. Fix flagged references against the real paper (verify via the arxiv /
-semantic-scholar MCP) — never hand-edit `bibcheck.json` to get past the gate.
+Fix flagged references **at the source** (`citations add`/`rebib` regenerate from the
+registry) — never hand-edit a report to get past a gate.
 
 ## Improvement loop
 

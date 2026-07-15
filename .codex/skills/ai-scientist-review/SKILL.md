@@ -45,11 +45,14 @@ function of the paper itself (no anchoring or leniency from "it has improved").
    any figure whose claim isn't supported by `experiment_results/`.
 4. **Integrity checks specific to autonomous papers:** flag (a) any number not traceable
    to `experiment/`, (b) any citation you can't verify is a real paper, (c) overclaiming
-   beyond the small-scale evidence. For (b), the deterministic checker's report at
-   `writeup/bibcheck.json` (from `aisci.bibcheck`) is a starting signal — confirm it is
-   present, fresh (its `bib_sha256` matches the current `references.bib`), and reports
-   `blocking: 0`; then still spot-check a few citations yourself, since the checker only
-   proves a paper *exists*, not that it says what the text claims it says.
+   beyond the small-scale evidence. For (b), two deterministic reports are the starting
+   signal — confirm both are present, fresh, and report `blocking: 0`:
+   `writeup/citations/index.json` (from `aisci.citations verify`: registry-exact
+   metadata, archived PDF/snapshot per reference, and quote-verified usage records) and
+   `writeup/bibcheck.json` (from `aisci.bibcheck`). Then spot-check citation *contexts*
+   yourself: open a few `writeup/citations/<key>/paper.txt` files and judge whether the
+   recorded `usage` quotes genuinely support the sentences citing them — the machinery
+   proves the quote exists in the paper, not that the inference drawn from it is fair.
 
 ## Core review JSON (every rubric; write to `projects/<id>/review.json`)
 Every rubric emits at least this **core schema**, unchanged in names and scales — it is
@@ -93,7 +96,7 @@ actionable weaknesses.
 Calibration reference: a strong paper *accepted* to the ICLR 2025 "I Can't Believe It's Not
 Better" (ICBINB) workshop averaged ~6.3/10 across three reviewers. Treat that as a floor to
 clear, not a ceiling — aim the *work* (not the scoring) at Overall ≥ 8. This skill feeds the
-improvement loop (`$ai-scientist-improve`): make the **Weaknesses** and **Questions**
+improvement loop (`/ai-scientist-improve`): make the **Weaknesses** and **Questions**
 specific and actionable so the next revision can actually close them.
 
 **Do NOT penalize length or format.** This pipeline imposes no page/character limit (see the

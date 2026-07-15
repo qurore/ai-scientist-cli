@@ -125,8 +125,12 @@ what was known at each point. Three required parts of the scan itself:
    an honest "we replicate + extend \[cite]" — the difference between an integrity failure and a
    strength. (Concretely, this is what caught, in one past study, that a "magnitude clock" was an
    already-published delay law — converting a novelty trap into an $r{=}0.98$ replication.)
-3. **Ground every new citation in the primary source.** Any reference the revision adds is verified
-   real and characterized from the paper itself (abstract/text via the MCP), never from memory.
+3. **Ground every new citation in the primary source.** Any reference the revision adds goes
+   through the evidence vault, never a hand-written bib entry: `aisci.citations add --arxiv/--doi`
+   generates the entry from the registry and archives the paper's PDF + page snapshot; then record
+   its usage with `aisci.citations usage` (verbatim quote from the archived text). Characterize it
+   from the paper itself (abstract/text via the MCP), never from memory. After any bib or paper-text
+   change, re-run `aisci.citations verify` + `aisci.bibcheck` — both hooks gate closing the stage.
    And cite **actively**: when the refresh surfaces genuinely relevant work the paper doesn't yet
    engage, work it into Related Work / Discussion rather than noting it and moving on — a
    top-journal paper engages a broad literature (~30–60 load-bearing references is typical), and

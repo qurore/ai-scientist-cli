@@ -8,6 +8,7 @@
     "allow": [
       "Bash(.venv/bin/python -m aisci.run:*)",
       "Bash(.venv/bin/python -m aisci.bibcheck:*)",
+      "Bash(.venv/bin/python -m aisci.citations:*)",
       "Bash(bash scripts/doctor.sh)"
     ],
     "deny": []
@@ -38,6 +39,10 @@
           {
             "type": "command",
             "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/enforce_bibcheck.py\""
+          },
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/enforce_citations.py\""
           }
         ]
       }
