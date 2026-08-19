@@ -1,5 +1,11 @@
 # AI-Scientist on Claude Code
 
+> **Archived.** This work now lives as **Exactory AI Science** in the exactory
+> plugin: [github.com/exactory/exactory-client](https://github.com/exactory/exactory-client).
+> The pipeline was rewritten there as one end-to-end research loop (cohort
+> doctrine, problem, experiments, draft, evaluate-and-improve, deposit, submit),
+> so this repository is read-only and no longer maintained.
+
 Run [Sakana AI's **AI-Scientist-v2**](https://github.com/SakanaAI/AI-Scientist-v2)
 research pipeline — *idea → experiments → paper → peer review* — **entirely inside
 Claude Code**, with **no external LLM API keys**. The Claude Code agent itself is the
